@@ -7,6 +7,7 @@ import { NoteType } from "../types/shared.types";
 import AddNote from "../components/AddNote";
 import { TbPlus, TbRefresh } from "react-icons/tb";
 import useNotesQuery from "../hooks/useNotesQuery";
+import { useState } from "react";
 
 interface NotesQueryTypes {
   data: NoteType[] | null | undefined;
@@ -18,6 +19,8 @@ const Notes = () => {
   const { data: notes, isLoading, error }: NotesQueryTypes = useNotesQuery();
 
   const refetch = () => {};
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
@@ -35,7 +38,7 @@ const Notes = () => {
             <TbRefresh className='me-2 self-center' />
             <span>refresh</span>
           </button>
-          <Dialog.Root>
+          <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Trigger className='bg-emerald-700 hover:bg-emerald-800 border-[1px] border-emerald-600 py-1 px-2 rounded flex transition-all'>
               <TbPlus className='me-2 self-center' />
               <span>add note</span>
@@ -49,7 +52,7 @@ const Notes = () => {
                 />
               </Dialog.Overlay>
               <Dialog.Content className='bg-neutral-900/40 backdrop-blur-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[400px] rounded-lg p-6 text-white border-[1px] border-stone-700'>
-                <AddNote />
+                <AddNote setIsOpen={setIsOpen} />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>

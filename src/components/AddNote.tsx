@@ -12,7 +12,13 @@ import {
 import useNoteInsert from "../hooks/useNoteInsert";
 import { NoteType } from "../types/shared.types";
 
-const AddNote = () => {
+interface AddNoteProps {
+  setIsOpen: (open: boolean) => void;
+}
+
+const AddNote = (props: AddNoteProps) => {
+  const { setIsOpen } = props;
+
   const [title, setTitle] = useState<string>("");
   const [context, setContext] = useState<string>("");
   const [isPinned, setIsPinned] = useState<
@@ -29,6 +35,9 @@ const AddNote = () => {
       is_pinned,
     };
     newNoteMutation.mutate(note);
+    if (!newNoteMutation.isLoading) {
+      setIsOpen(false);
+    }
   };
 
   return (
