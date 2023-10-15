@@ -9,6 +9,8 @@ import {
   TbPinnedOff,
   TbX,
 } from "react-icons/tb";
+import useNoteInsert from "../hooks/useNoteInsert";
+import { NoteType } from "../types/shared.types";
 
 const AddNote = () => {
   const [title, setTitle] = useState<string>("");
@@ -17,9 +19,16 @@ const AddNote = () => {
     "checked" | "unchecked" | "indeterminate"
   >("indeterminate");
   const is_pinned = isPinned === "checked" ? true : false;
+  const newNoteMutation = useNoteInsert();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const note: NoteType = {
+      title,
+      context,
+      is_pinned,
+    };
+    newNoteMutation.mutate(note);
   };
 
   return (
@@ -51,11 +60,15 @@ const AddNote = () => {
         </div>
 
         <Form.Submit asChild>
-          <button className='flex justify-center items-center gap-2 p-2 bg-emerald-700 rounded-md'>
+          <button
+            disabled={newNoteMutation.isLoading || context === ""}
+            className='flex justify-center items-center gap-2 p-2 bg-emerald-700 rounded-md disabled:opacity-50'
+          >
             <TbDeviceFloppy /> save
           </button>
         </Form.Submit>
       </Form.Root>
+
       <div className='absolute -top-3 -right-3 flex shadow-sm text-xl bg-emerald-700 rounded-md overflow-hidden before:content-[""] before:absolute before:w-[1.2px] before:h-4/6 before:inset-x-1/2 before:self-center before:flex before:bg-neutral-600/40'>
         <Checkbox.Root
           checked={isPinned === "checked"}

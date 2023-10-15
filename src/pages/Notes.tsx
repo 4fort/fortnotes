@@ -2,14 +2,22 @@ import * as Dialog from "@radix-ui/react-dialog";
 import NoteCard from "../components/NoteCard/NoteCard";
 import NoteCardSkeleton from "../components/NoteCard/NoteCardSkeleton";
 import { motion } from "framer-motion";
-import useFetch from "../hooks/useFetch";
 
 import { NoteType } from "../types/shared.types";
 import AddNote from "../components/AddNote";
 import { TbPlus, TbRefresh } from "react-icons/tb";
+import useNotesQuery from "../hooks/useNotesQuery";
+
+interface NotesQueryTypes {
+  data: NoteType[] | null | undefined;
+  isLoading: boolean;
+  error: string | unknown;
+}
 
 const Notes = () => {
-  const { notes, isLoading, fetchError, refetch } = useFetch();
+  const { data: notes, isLoading, error }: NotesQueryTypes = useNotesQuery();
+
+  const refetch = () => {};
 
   return (
     <div
@@ -47,7 +55,7 @@ const Notes = () => {
           </Dialog.Root>
         </div>
       </div>
-      {fetchError && <p>{fetchError}</p>}
+      {error! && <p>{JSON.stringify(error)}</p>}
       {notes && (
         <div className=''>
           <div className='w-full h-full grid grid-cols-4 gap-4 mt-5'>

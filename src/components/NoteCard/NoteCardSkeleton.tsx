@@ -19,7 +19,7 @@ const NoteCardSkeleton = (props: NoteCardSkeletonProps) => {
       }}
       key={index}
       // style={{ opacity: 1 - index / 14 }}
-      className='relative max-h-44 min-h-44 flex flex-col justify-evenly border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 transition-all z-10'
+      className='relative max-h-44 min-h-44 h-44 flex flex-col justify-evenly border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 transition-all z-10'
     >
       <h3 className='font-bold text-2xl'>
         <div className='w-28 h-5 bg-neutral-600 rounded-sm' />

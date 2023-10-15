@@ -11,7 +11,7 @@ const NoteCard = (props: NoteCardProps) => {
 
   const [pinIsHovered, setPinIsHovered] = useState<boolean>(false);
 
-  const formattedDate = new Date(note.created_at).toLocaleTimeString([], {
+  const formattedDate = new Date(note.created_at!).toLocaleTimeString([], {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -22,7 +22,7 @@ const NoteCard = (props: NoteCardProps) => {
   return (
     <div
       key={note?.id}
-      className='relative max-h-44 min-h-44 flex flex-col justify-evenly border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 hover:bg-neutral-700/60 hover:scale-105 hover:shadow-md cursor-pointer transition-all z-0'
+      className='relative max-h-44 min-h-44 h-44 flex flex-col justify-evenly border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 hover:bg-neutral-700/60 hover:scale-105 hover:shadow-md cursor-pointer transition-all z-0'
     >
       {note.is_pinned && (
         <div
