@@ -1,8 +1,12 @@
+import * as Dialog from "@radix-ui/react-dialog";
 import NoteCard from "../components/NoteCard/NoteCard";
 import NoteCardSkeleton from "../components/NoteCard/NoteCardSkeleton";
+import { motion } from "framer-motion";
 import useFetch from "../hooks/useFetch";
 
 import { NoteType } from "../types/shared.types";
+import AddNote from "../components/AddNote";
+import { TbPlus, TbRefresh } from "react-icons/tb";
 
 const Notes = () => {
   const { notes, isLoading, fetchError, refetch } = useFetch();
@@ -14,13 +18,34 @@ const Notes = () => {
     >
       <div className='flex justify-between'>
         <h1>Notes</h1>
-        <button
-          className='bg-emerald-700 hover:bg-emerald-800 text-xs text-white py-1 px-4 rounded transition-all'
-          onClick={refetch}
-          style={isLoading ? { cursor: "wait" } : { cursor: "pointer" }}
-        >
-          refresh
-        </button>
+        <div className='flex gap-2 text-xs'>
+          <button
+            className='bg-emerald-700 hover:bg-emerald-800 border-[1px] border-emerald-600 py-1 px-2 rounded flex transition-all'
+            onClick={refetch}
+            style={isLoading ? { cursor: "wait" } : { cursor: "pointer" }}
+          >
+            <TbRefresh className='me-2 self-center' />
+            <span>refresh</span>
+          </button>
+          <Dialog.Root>
+            <Dialog.Trigger className='bg-emerald-700 hover:bg-emerald-800 border-[1px] border-emerald-600 py-1 px-2 rounded flex transition-all'>
+              <TbPlus className='me-2 self-center' />
+              <span>add note</span>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className='' asChild>
+                <motion.div
+                  animate={{ opacity: [0, 1] }}
+                  transition={{ duration: 0.2 }}
+                  className='bg-black/60 inset-0 fixed'
+                />
+              </Dialog.Overlay>
+              <Dialog.Content className='bg-neutral-900/40 backdrop-blur-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[400px] rounded-lg p-6 text-white border-[1px] border-stone-700'>
+                <AddNote />
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+        </div>
       </div>
       {fetchError && <p>{fetchError}</p>}
       {notes && (

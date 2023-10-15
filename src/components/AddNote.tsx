@@ -16,10 +16,10 @@ const AddNote = () => {
   const [isPinned, setIsPinned] = useState<
     "checked" | "unchecked" | "indeterminate"
   >("indeterminate");
+  const is_pinned = isPinned === "checked" ? true : false;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(title, context, isPinned);
   };
 
   return (
@@ -52,7 +52,7 @@ const AddNote = () => {
 
         <Form.Submit asChild>
           <button className='flex justify-center items-center gap-2 p-2 bg-emerald-700 rounded-md'>
-            <TbDeviceFloppy /> Save
+            <TbDeviceFloppy /> save
           </button>
         </Form.Submit>
       </Form.Root>
