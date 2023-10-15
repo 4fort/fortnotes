@@ -1,3 +1,5 @@
+import NoteCard from "../components/NoteCard/NoteCard";
+import NoteCardSkeleton from "../components/NoteCard/NoteCardSkeleton";
 import useFetch from "../hooks/useFetch";
 
 import { NoteType } from "../types/shared.types";
@@ -22,18 +24,20 @@ const Notes = () => {
       </div>
       {fetchError && <p>{fetchError}</p>}
       {notes && (
-        <div className='w-full h-full grid grid-cols-4 gap-4 mt-5'>
-          {notes.map((note: NoteType) => (
-            <div
-              key={note.id}
-              className='max-h-32 min-h-32 overflow-hidden border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 hover:bg-neutral-700/60 hover:scale-105 cursor-pointer transition-all'
-            >
-              <h3 className='font-bold text-2xl'>{note.title}</h3>
-              <p className='pt-3 line-clamp-2 text-neutral-500'>
-                {note.context}
-              </p>
-            </div>
-          ))}
+        <div className=''>
+          <div className='w-full h-full grid grid-cols-4 gap-4 mt-5'>
+            {isLoading
+              ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((e: number, i) => (
+                  <NoteCardSkeleton key={e} index={i} />
+                ))
+              : notes.map((note: NoteType) => (
+                  <NoteCard key={note.id} note={note} />
+                ))}
+            {/* {notes.map(
+              (note: NoteType) =>
+                note.is_pinned && <NoteCard key={note.id} note={note} />
+            )} */}
+          </div>
         </div>
       )}
     </div>

@@ -11,7 +11,7 @@ interface UseFetchTypes {
 
 const useFetch = (): UseFetchTypes => {
   const [notes, setNotes] = useState<NoteType[] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -36,8 +36,6 @@ const useFetch = (): UseFetchTypes => {
   }, []);
 
   const refetch = () => {
-    setIsLoading(true);
-    setFetchError(null);
     fetchData();
   };
 
