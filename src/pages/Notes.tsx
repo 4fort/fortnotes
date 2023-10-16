@@ -4,21 +4,20 @@ import NoteCardSkeleton from "../components/NoteCard/NoteCardSkeleton";
 import { motion } from "framer-motion";
 
 import { NoteType } from "../types/shared.types";
-import AddNote from "../components/AddNote";
+import NoteDialog from "../components/NoteDialog";
 import { TbPlus, TbRefresh } from "react-icons/tb";
 import useNotesQuery from "../hooks/useNotesQuery";
 import { useState } from "react";
-
-interface NotesQueryTypes {
-  data: NoteType[] | null | undefined;
-  isLoading: boolean;
-  error: string | unknown;
-}
+import useNoteRefetch from "../hooks/useNoteRefetch";
+import { UseQueryResult } from "@tanstack/react-query";
 
 const Notes = () => {
-  const { data: notes, isLoading, error }: NotesQueryTypes = useNotesQuery();
-
-  const refetch = () => {};
+  const {
+    data: notes,
+    isLoading,
+    error,
+  }: UseQueryResult<NoteType[] | null> = useNotesQuery();
+  const refetch = useNoteRefetch();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -47,12 +46,12 @@ const Notes = () => {
               <Dialog.Overlay className='' asChild>
                 <motion.div
                   animate={{ opacity: [0, 1] }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.15 }}
                   className='bg-black/60 inset-0 fixed'
                 />
               </Dialog.Overlay>
               <Dialog.Content className='bg-neutral-900/40 backdrop-blur-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[400px] rounded-lg p-6 text-white border-[1px] border-stone-700'>
-                <AddNote setIsOpen={setIsOpen} />
+                <NoteDialog setIsOpen={setIsOpen} />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -62,13 +61,14 @@ const Notes = () => {
       {notes && (
         <div className=''>
           <div className='w-full h-full grid grid-cols-4 gap-4 mt-5'>
-            {isLoading
-              ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((e: number, i) => (
-                  <NoteCardSkeleton key={e} index={i} />
-                ))
-              : notes.map((note: NoteType) => (
-                  <NoteCard key={note.id} note={note} />
-                ))}
+            {isLoading &&
+              [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((e: number, i) => (
+                <NoteCardSkeleton key={e + i} index={i} />
+              ))}
+            {notes &&
+              notes.map((note: NoteType) => (
+                <NoteCard key={note.id} note={note} />
+              ))}
             {/* {notes.map(
               (note: NoteType) =>
                 note.is_pinned && <NoteCard key={note.id} note={note} />

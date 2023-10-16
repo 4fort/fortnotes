@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
-import { NoteType } from "../types/shared.types";
+import supabase from "../../config/supabaseClient";
+import { NoteType } from "../../types/shared.types";
 
 interface UseFetchTypes {
   notes: NoteType[] | null;

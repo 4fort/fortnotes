@@ -8,3 +8,5 @@ export const getNotes = () => {
 export const insertNote = (note: NoteType) => {
   return supabase.from("notes").insert(note);
 };
+
+export const selectNote = (noteId: number) => {};

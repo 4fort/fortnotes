@@ -11,6 +11,10 @@
   }
 }
 
+body {
+  @apply bg-neutral-900;
+}
+
 ::-webkit-scrollbar {
   @apply w-1;
 }

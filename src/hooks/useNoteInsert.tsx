@@ -10,14 +10,19 @@ const useNoteInsert = () => {
       return insertNote(note).then((result) => result.data);
     },
     {
-      onMutate: (note: NoteType) => {
-        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      onMutate: async (note: NoteType) => {
+        await queryClient.cancelQueries(["notes"]);
+
+        const previousNotes = queryClient.getQueriesData(["notes"]);
+
         queryClient.setQueryData(
           ["notes"],
           (oldNotes: NoteType[] | undefined) => {
             return oldNotes ? [...oldNotes, note] : [note];
           }
         );
+
+        return previousNotes;
       },
       onError: (note: NoteType) => {
         queryClient.setQueryData(

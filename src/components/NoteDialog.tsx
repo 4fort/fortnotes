@@ -16,7 +16,7 @@ interface AddNoteProps {
   setIsOpen: (open: boolean) => void;
 }
 
-const AddNote = (props: AddNoteProps) => {
+const NoteDialog = (props: AddNoteProps) => {
   const { setIsOpen } = props;
 
   const [title, setTitle] = useState<string>("");
@@ -48,7 +48,7 @@ const AddNote = (props: AddNoteProps) => {
           <Form.Field className='flex flex-col' name='title'>
             <Form.Control asChild>
               <input
-                className='bg-transparent focus:bg-neutral-800/20 text-2xl font-semibold p-2 focus:outline-none border-b-2 border-b-neutral-800'
+                className='bg-emerald-950/5 focus:bg-emerald-950/20 text-2xl font-semibold p-2 focus:outline-none border-b-2 border-b-neutral-800'
                 type='text'
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -70,7 +70,11 @@ const AddNote = (props: AddNoteProps) => {
 
         <Form.Submit asChild>
           <button
-            disabled={newNoteMutation.isLoading || context === ""}
+            disabled={
+              newNoteMutation.isLoading ||
+              (context === "" && !title) ||
+              (!context && title === "")
+            }
             className='flex justify-center items-center gap-2 p-2 bg-emerald-700 rounded-md disabled:opacity-50'
           >
             <TbDeviceFloppy /> save
@@ -120,4 +124,4 @@ const AddNote = (props: AddNoteProps) => {
   );
 };
 
-export default AddNote;
+export default NoteDialog;
