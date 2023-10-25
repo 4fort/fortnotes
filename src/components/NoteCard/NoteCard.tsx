@@ -1,15 +1,16 @@
-import { TbPin, TbPinnedOff } from "react-icons/tb";
+import { TbPencil, TbPin } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { NoteType } from "../../types/shared.types";
 import { useEffect, useState } from "react";
-import useEditNote from "../../hooks/useEditNote";
 
 interface NoteCardProps {
   note: NoteType;
+  setSelectedNote: (id: number | null) => void;
+  setIsOpen: (open: boolean) => void;
 }
 
 const NoteCard = (props: NoteCardProps) => {
-  const { note } = props;
+  const { note, setSelectedNote, setIsOpen } = props;
 
   const [pinIsHovered, setPinIsHovered] = useState<boolean>(false);
 
@@ -29,36 +30,76 @@ const NoteCard = (props: NoteCardProps) => {
     } else setFormattedDate("Saving note...");
   }, [note]);
 
-  const [selectedNote, setSelectedNote] = useState<number | undefined>();
-  useEditNote(selectedNote);
-
   return (
     <motion.div
       animate={{ scale: [0.9, 1], opacity: [0, 1] }}
       key={note?.id}
       onClick={() => {
-        setSelectedNote(note.id);
+        if (note.id) {
+          setSelectedNote(note.id);
+          setIsOpen(true);
+        } else {
+          setSelectedNote(null);
+          console.log(note);
+          setIsOpen(false);
+        }
       }}
-      className='relative max-h-44 min-h-44 h-44 flex flex-col justify-evenly border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 hover:bg-neutral-700/60 hover:scale-105 hover:shadow-md cursor-pointer transition-all z-0'
+      className='relative max-h-44 min-h-44 h-44 flex flex-col justify-between border-[1px] border-stone-700 rounded-md bg-neutral-800/40 p-5 hover:bg-neutral-700/60 hover:shadow-md cursor-pointer transition-all z-0'
+      onMouseEnter={() => setPinIsHovered(true)}
+      onMouseLeave={() => setPinIsHovered(false)}
     >
-      {note.is_pinned && (
-        <div
-          className='absolute -top-3 -right-3 text-xl bg-emerald-700 hover:bg-emerald-800 rounded-md p-2 shadow-sm active:scale-90 transition-all z-10'
-          onMouseEnter={() => setPinIsHovered(true)}
-          onMouseLeave={() => setPinIsHovered(false)}
+      {note.is_pinned ? (
+        <motion.div
+          animate={{ y: ["-80%", "0%"], opacity: [0, 1] }}
+          transition={{ duration: 0.2, delay: 0.35 }}
+          className='absolute -top-3 -right-3 text-xl bg-emerald-700 rounded-md p-2 shadow-sm active:scale-90 transition-all z-10'
         >
           {pinIsHovered ? (
-            <TbPinnedOff color='white' stroke='white' />
+            <TbPencil color='white' stroke='white' />
           ) : (
             <TbPin color='white' stroke='white' />
           )}
-        </div>
+        </motion.div>
+      ) : pinIsHovered ? (
+        <motion.div
+          animate={{ y: ["10%", "0%"], opacity: [0, 1] }}
+          transition={{ duration: 0.2 }}
+          className='absolute -top-3 -right-3 text-xl bg-emerald-700 rounded-md p-2 shadow-sm active:scale-90 transition-all z-10'
+        >
+          <TbPencil color='white' stroke='white' />
+        </motion.div>
+      ) : null}
+      {note.title && (
+        <h3
+          className={
+            (note.context ? "line-clamp-2" : "line-clamp-3") +
+            " font-bold text-2xl "
+          }
+        >
+          {note.title}
+        </h3>
       )}
-      <h3 className='font-bold text-2xl line-clamp-2'>{note.title}</h3>
-      <p className='text-xs text-neutral-500 font-semibold pt-1'>
-        {formattedDate}
-      </p>
-      <p className='pt-3 line-clamp-2 text-neutral-500'>{note.context}</p>
+      {note.title && (
+        <p className='text-xs text-neutral-500 font-semibold pt-1'>
+          {formattedDate}
+        </p>
+      )}
+      {note.context && (
+        <p
+          className={
+            note.title
+              ? "pt-3 line-clamp-2 leading-5 text-neutral-500"
+              : "line-clamp-3 text-2xl"
+          }
+        >
+          {note.context}
+        </p>
+      )}
+      {!note.title && (
+        <p className='text-xs text-neutral-500 font-semibold pt-1'>
+          {formattedDate}
+        </p>
+      )}
     </motion.div>
   );
 };

@@ -1,5 +1,5 @@
 import supabase from "../config/supabaseClient";
-import { NoteType } from "../types/shared.types";
+import { NoteType, NoteUpdateType } from "../types/shared.types";
 
 export const getNotes = () => {
   return supabase.from("notes").select();
@@ -9,4 +9,6 @@ export const insertNote = (note: NoteType) => {
   return supabase.from("notes").insert(note);
 };
 
-export const selectNote = (noteId: number) => {};
+export const updateNote = (params: NoteUpdateType) => {
+  return supabase.from("notes").update(params.data).eq("id", params.id);
+};

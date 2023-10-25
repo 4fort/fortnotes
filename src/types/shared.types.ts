@@ -5,3 +5,8 @@ export interface NoteType {
   context: string;
   is_pinned: boolean;
 }
+
+export interface NoteUpdateType {
+  id: number;
+  data: NoteType;
+}

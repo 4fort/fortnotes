@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Form from "@radix-ui/react-form";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -7,17 +7,22 @@ import {
   TbPin,
   TbPinFilled,
   TbPinnedOff,
+  TbTrash,
   TbX,
 } from "react-icons/tb";
 import useNoteInsert from "../hooks/useNoteInsert";
 import { NoteType } from "../types/shared.types";
+import useNoteQueryById from "../hooks/useNoteQueryById";
+import useNoteUpdate from "../hooks/useNoteUpdate";
 
 interface AddNoteProps {
+  setSelectedNote: (id: number | null) => void;
+  selectedNote?: number | null;
   setIsOpen: (open: boolean) => void;
 }
 
 const NoteDialog = (props: AddNoteProps) => {
-  const { setIsOpen } = props;
+  const { setIsOpen, setSelectedNote, selectedNote } = props;
 
   const [title, setTitle] = useState<string>("");
   const [context, setContext] = useState<string>("");
@@ -25,8 +30,24 @@ const NoteDialog = (props: AddNoteProps) => {
     "checked" | "unchecked" | "indeterminate"
   >("indeterminate");
   const is_pinned = isPinned === "checked" ? true : false;
-  const newNoteMutation = useNoteInsert();
 
+  const toEditNote = useNoteQueryById(selectedNote ?? undefined);
+
+  const emptyFields = () => {
+    setSelectedNote(null);
+  };
+
+  useEffect(() => {
+    if (toEditNote) {
+      setTitle(toEditNote.title);
+      setContext(toEditNote.context);
+      setIsPinned(toEditNote.is_pinned ? "checked" : "unchecked");
+    }
+    return;
+  }, [toEditNote]);
+
+  const newNoteMutation = useNoteInsert();
+  const updateNoteMutation = useNoteUpdate();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const note: NoteType = {
@@ -34,9 +55,21 @@ const NoteDialog = (props: AddNoteProps) => {
       context,
       is_pinned,
     };
+    if (selectedNote) {
+      const updatedNote = {
+        id: selectedNote,
+        data: note,
+      };
+
+      setIsOpen(false);
+      updateNoteMutation.mutate(updatedNote);
+      return;
+    }
+    // console.log(selectedNote);
     newNoteMutation.mutate(note);
     if (!newNoteMutation.isLoading) {
       setIsOpen(false);
+      emptyFields();
     }
   };
 
@@ -52,6 +85,7 @@ const NoteDialog = (props: AddNoteProps) => {
                 type='text'
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                autoComplete='off'
               />
             </Form.Control>
           </Form.Field>
@@ -63,6 +97,7 @@ const NoteDialog = (props: AddNoteProps) => {
                 rows={10}
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
+                autoComplete='off'
               />
             </Form.Control>
           </Form.Field>
@@ -77,7 +112,10 @@ const NoteDialog = (props: AddNoteProps) => {
             }
             className='flex justify-center items-center gap-2 p-2 bg-emerald-700 rounded-md disabled:opacity-50'
           >
-            <TbDeviceFloppy /> save
+            <TbDeviceFloppy />{" "}
+            {(context === "" && !title) || (!context && title === "")
+              ? "Fields must not be empty"
+              : "save"}
           </button>
         </Form.Submit>
       </Form.Root>
@@ -115,7 +153,11 @@ const NoteDialog = (props: AddNoteProps) => {
           asChild
           className='group hover:bg-emerald-800 p-2 transition-all'
         >
-          <button aria-label='Close'>
+          <button
+            type='button'
+            aria-label='Close'
+            onClick={() => emptyFields()}
+          >
             <TbX className='group-active:scale-90 transition-all' />
           </button>
         </Dialog.Close>

@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { NoteType } from "../types/shared.types";
+import { NoteType } from "../../types/shared.types";
 
 const useEditNote = (noteId?: NoteType["id"]) => {
   const queryClient = useQueryClient();

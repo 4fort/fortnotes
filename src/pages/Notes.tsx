@@ -20,6 +20,9 @@ const Notes = () => {
   const refetch = useNoteRefetch();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<number | null>(null);
+
+  console.log(isLoading);
 
   return (
     <div
@@ -51,7 +54,11 @@ const Notes = () => {
                 />
               </Dialog.Overlay>
               <Dialog.Content className='bg-neutral-900/40 backdrop-blur-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[400px] rounded-lg p-6 text-white border-[1px] border-stone-700'>
-                <NoteDialog setIsOpen={setIsOpen} />
+                <NoteDialog
+                  setIsOpen={setIsOpen}
+                  setSelectedNote={setSelectedNote}
+                  selectedNote={selectedNote}
+                />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -59,21 +66,46 @@ const Notes = () => {
       </div>
       {error! && <p>{JSON.stringify(error)}</p>}
       {notes && (
-        <div className=''>
-          <div className='w-full h-full grid grid-cols-4 gap-4 mt-5'>
+        <div className='mt-5 flex flex-col gap-4'>
+          <div className='grid grid-cols-4 gap-4'>
+            {notes?.map(
+              (note: NoteType) =>
+                note.is_pinned && (
+                  <NoteCard
+                    key={note.id}
+                    note={note}
+                    setSelectedNote={setSelectedNote}
+                    setIsOpen={setIsOpen}
+                  />
+                )
+            )}
+          </div>
+          <hr className='border-t border-stone-700 w-11/12 self-center' />
+          <div className='w-full h-full grid grid-cols-4 gap-4'>
             {isLoading &&
               [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((e: number, i) => (
                 <NoteCardSkeleton key={e + i} index={i} />
               ))}
             {notes &&
-              notes.map((note: NoteType) => (
-                <NoteCard key={note.id} note={note} />
-              ))}
-            {/* {notes.map(
-              (note: NoteType) =>
-                note.is_pinned && <NoteCard key={note.id} note={note} />
-            )} */}
+              notes
+                .reverse()
+                .map(
+                  (note: NoteType) =>
+                    !note.is_pinned && (
+                      <NoteCard
+                        key={note.id}
+                        note={note}
+                        setSelectedNote={setSelectedNote}
+                        setIsOpen={setIsOpen}
+                      />
+                    )
+                )}
           </div>
+        </div>
+      )}
+      {!notes && !isLoading && (
+        <div className='flex justify-center algin-center'>
+          <p className='text-stone-600'>Error fetching notes</p>
         </div>
       )}
     </div>
